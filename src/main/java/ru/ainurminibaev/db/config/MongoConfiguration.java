@@ -1,5 +1,6 @@
 package ru.ainurminibaev.db.config;
 
+import com.mongodb.MongoClient;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
@@ -9,30 +10,30 @@ import org.springframework.data.mongodb.MongoDbFactory;
 import org.springframework.data.mongodb.core.MongoTemplate;
 import org.springframework.data.mongodb.core.SimpleMongoDbFactory;
 
-import com.mongodb.MongoClient;
-
 @Configuration
 public class MongoConfiguration {
-	public static final String MONGO_TEMPLATE_NAME = "mongoTemplate";
+    public static final String MONGO_TEMPLATE_NAME = "mongoTemplate";
 
-	@Autowired
-	Environment env;
+    @Autowired
+    Environment env;
 
-	public @Bean
-	MongoDbFactory mongoDbFactory() throws Exception {
-		return new SimpleMongoDbFactory(new MongoClient(),
-				"db_schema_ui",
-				new UserCredentials(env.getProperty("mongo.user.name"),
-						env.getProperty("mongo.user.password")));
-	}
+    public
+    @Bean
+    MongoDbFactory mongoDbFactory() throws Exception {
+        return new SimpleMongoDbFactory(new MongoClient(),
+                "db_schema_ui",
+                new UserCredentials(env.getProperty("mongo.user.name"),
+                        env.getProperty("mongo.user.password")));
+    }
 
-	public @Bean
-	MongoTemplate mongoTemplate() throws Exception {
+    public
+    @Bean
+    MongoTemplate mongoTemplate() throws Exception {
 
-		MongoTemplate mongoTemplate = new MongoTemplate(mongoDbFactory());
+        MongoTemplate mongoTemplate = new MongoTemplate(mongoDbFactory());
 
-		return mongoTemplate;
+        return mongoTemplate;
 
-	}
+    }
 
 }

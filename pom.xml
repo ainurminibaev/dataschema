@@ -14,6 +14,8 @@
         <spring-data-jpa.version>1.4.2.RELEASE</spring-data-jpa.version>
         <poi.version>3.10.1</poi.version>
         <validation-api.version>1.1.0.Final</validation-api.version>
+        <spring-security-crypto.version>3.2.3.RELEASE</spring-security-crypto.version>
+        <org.springframework.security.version>3.2.3.RELEASE</org.springframework.security.version>
     </properties>
 
     <name>dbschema-ui</name>
@@ -97,6 +99,18 @@
             <artifactId>spring-data-jpa</artifactId>
             <version>${spring-data-jpa.version}</version>
         </dependency>
+
+        <dependency>
+            <groupId>org.springframework.security</groupId>
+            <artifactId>spring-security-web</artifactId>
+            <version>4.0.3.RELEASE</version>
+        </dependency>
+        <dependency>
+            <groupId>org.springframework.security</groupId>
+            <artifactId>spring-security-config</artifactId>
+            <version>4.0.3.RELEASE</version>
+        </dependency>
+
 
         <dependency>
             <groupId>org.hibernate</groupId>
