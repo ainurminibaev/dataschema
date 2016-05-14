@@ -10,7 +10,7 @@ import org.springframework.data.mongodb.MongoDbFactory;
 import org.springframework.data.mongodb.core.MongoTemplate;
 import org.springframework.data.mongodb.core.SimpleMongoDbFactory;
 
-@Configuration
+//@Configuration
 public class MongoConfiguration {
     public static final String MONGO_TEMPLATE_NAME = "mongoTemplate";
 

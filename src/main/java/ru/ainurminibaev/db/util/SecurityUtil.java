@@ -2,6 +2,7 @@ package ru.ainurminibaev.db.util;
 
 import java.sql.Connection;
 
+import org.springframework.security.core.Authentication;
 import org.springframework.security.core.context.SecurityContextHolder;
 import ru.ainurminibaev.db.security.DBConnectionAuthToken;
 
@@ -11,10 +12,26 @@ import ru.ainurminibaev.db.security.DBConnectionAuthToken;
 public class SecurityUtil {
 
     public static Connection getConnection() {
-        DBConnectionAuthToken authToken = (DBConnectionAuthToken) SecurityContextHolder.getContext().getAuthentication();
+        Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
+        if (!(authentication instanceof DBConnectionAuthToken)) {
+            return null;
+        }
+        DBConnectionAuthToken authToken = (DBConnectionAuthToken) authentication;
         if (authToken == null) {
             return null;
         }
         return authToken.getConnection();
+    }
+
+    public static String getUrl() {
+        Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
+        if (!(authentication instanceof DBConnectionAuthToken)) {
+            return null;
+        }
+        DBConnectionAuthToken authToken = (DBConnectionAuthToken) authentication;
+        if (authToken == null) {
+            return null;
+        }
+        return authToken.getHost();
     }
 }

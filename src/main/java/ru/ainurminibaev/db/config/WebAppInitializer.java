@@ -15,7 +15,7 @@ public class WebAppInitializer extends AbstractAnnotationConfigDispatcherServlet
 
     @Override
     protected Class<?>[] getRootConfigClasses() {
-        return new Class<?>[]{CoreConfig.class, MongoConfiguration.class, WebSecurityConfig.class};
+        return new Class<?>[]{CoreConfig.class, SpringMongoConfiguration.class, WebSecurityConfig.class};
     }
 
     @Override
