@@ -18,16 +18,22 @@ import com.google.common.base.Joiner;
 import com.google.common.collect.Lists;
 import com.google.common.collect.Maps;
 import com.google.common.primitives.Ints;
+import org.apache.commons.lang3.StringUtils;
 import org.apache.commons.lang3.text.WordUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
+import ru.ainurminibaev.db.dto.HeaderView;
+import ru.ainurminibaev.db.dto.SortEnum;
 import ru.ainurminibaev.db.dto.TableDataResponse;
 import ru.ainurminibaev.db.dto.TableViewCol;
 import ru.ainurminibaev.db.dto.TableViewRow;
+import ru.ainurminibaev.db.model.ColumnSettings;
 import ru.ainurminibaev.db.model.DBMetadata;
 import ru.ainurminibaev.db.model.TableMetadata;
+import ru.ainurminibaev.db.model.TableSettings;
 import ru.ainurminibaev.db.repository.DBMetadataRepository;
 import ru.ainurminibaev.db.repository.TableMetadataRepository;
+import ru.ainurminibaev.db.repository.TableSettingsRepository;
 import ru.ainurminibaev.db.service.AppService;
 import ru.ainurminibaev.db.util.SecurityUtil;
 
@@ -43,6 +49,9 @@ public class AppServiceImpl implements AppService {
 
     @Autowired
     TableMetadataRepository tableMetadataRepository;
+
+    @Autowired
+    TableSettingsRepository tableSettingsRepository;
 
     private List<String> retrieveTableNames() {
         List<String> tableNames = Lists.newArrayList();
@@ -100,9 +109,17 @@ public class AppServiceImpl implements AppService {
     @Override
     public Map<String, String> getTableNames() {
         DBMetadata currentDb = getCurrentDb();
+        List<TableSettings> tableSettingsList = tableSettingsRepository.findAllTables(currentDb.getId());
         HashMap<String, String> tableNameMap = Maps.newHashMap();
         for (String tableName : currentDb.getTables()) {
-            tableNameMap.put(tableName, resolveName(tableName));
+            // putting default value
+            tableNameMap.put(tableName, tableName);
+            for (TableSettings tableSettings : tableSettingsList) {
+                if (tableSettings.getTableName().equals(tableName)) {
+                    tableNameMap.put(tableName, tableSettings.getPrintable());
+                    break;
+                }
+            }
         }
         return tableNameMap;
     }
@@ -124,16 +141,29 @@ public class AppServiceImpl implements AppService {
     }
 
     @Override
-    public List<String> getTableColumnNames(String tableName) {
+    public List<HeaderView> getTableColumnNames(String tableName) {
         DBMetadata currentDb = getCurrentDb();
         TableMetadata tableMetadata = tableMetadataRepository.findByTableAndDb(tableName, currentDb.getId());
         if (tableMetadata == null) {
             return Lists.newArrayList();
         }
-        return tableMetadata.getColumns().stream().map(this::resolveName).collect(Collectors.toList());
+        TableSettings tableSettings = tableSettingsRepository.findByTableAndDb(tableName, currentDb.getId());
+
+        return tableMetadata
+                .getColumns()
+                .stream()
+                .map((column) -> {
+                    for (ColumnSettings columnSettings : tableSettings.getColumns()) {
+                        if (columnSettings.getName().equals(column)) {
+                            return new HeaderView(column, columnSettings.getPrintable());
+                        }
+                    }
+                    return new HeaderView(column);
+                })
+                .collect(Collectors.toList());
     }
 
-    private List<TableViewRow> getTableData(String tableName, Integer page, Integer size) {
+    private List<TableViewRow> getTableData(String tableName, Integer page, Integer size, String sortColumn, SortEnum sortEnum) {
         if (page == null) {
             page = 0;
         }
@@ -147,7 +177,11 @@ public class AppServiceImpl implements AppService {
         Connection conn = SecurityUtil.getConnection();
         try {
             //TODO prepared statement
-            PreparedStatement preparedStatement = conn.prepareStatement("SELECT " + Joiner.on(",").join(columns) + " FROM " + tableName + " LIMIT " + size + "OFFSET " + (page * size));
+            String sql = "SELECT " + Joiner.on(",").join(columns) + " FROM " + tableName;
+            if (sortColumn != null && sortEnum != null) {
+                sql += " ORDER BY " + sortColumn + " " + sortEnum.getStr();
+            }
+            PreparedStatement preparedStatement = conn.prepareStatement(sql + " LIMIT " + size + "OFFSET " + (page * size));
             ResultSet rs = preparedStatement.executeQuery();
             while (rs.next()) {
                 //Retrieve by column name
@@ -169,10 +203,12 @@ public class AppServiceImpl implements AppService {
     public TableDataResponse getTableDataResponse(String tableName, HttpServletRequest servletRequest) {
         Integer page = Ints.tryParse(servletRequest.getParameter("page"));
         Integer size = Ints.tryParse(servletRequest.getParameter("size"));
+        String sortColumn = StringUtils.trimToNull(servletRequest.getParameter("sort"));
+        SortEnum sortEnum = SortEnum.get(Ints.tryParse(servletRequest.getParameter("order")));
 
         TableDataResponse tableDataResponse = new TableDataResponse();
         tableDataResponse.setData(new ArrayList<>());
-        List<TableViewRow> tableViewRows = getTableData(tableName, page, size);
+        List<TableViewRow> tableViewRows = getTableData(tableName, page, size, sortColumn, sortEnum);
 
         tableDataResponse.setData(tableViewRows);
         tableDataResponse.setRecordsFiltered(tableViewRows.size());
@@ -209,10 +245,43 @@ public class AppServiceImpl implements AppService {
         }
         newMetadata = dbMetadataRepository.save(newMetadata);
         updateTableMetadata(newMetadata);
+        initOrUpdateTableSettings(newMetadata);
         return newMetadata;
     }
 
+    private void initOrUpdateTableSettings(DBMetadata newMetadata) {
+        //TODO clean from old metadata
+        List<TableSettings> tableSettingsList = tableSettingsRepository.findAllTables(newMetadata.getId());
+        Map<String, TableSettings> tableSettingsMap = Maps.newHashMap();
+        for (TableSettings tableSettings : tableSettingsList) {
+            tableSettingsMap.put(tableSettings.getTableName(), tableSettings);
+        }
+        for (String tableName : newMetadata.getTables()) {
+            TableSettings tableSettings = tableSettingsMap.get(tableName);
+            if (tableSettings == null) {
+                List<String> columnNames = getColumnNames(tableName);
+                tableSettings = new TableSettings();
+                tableSettings.setPrintable(resolveName(tableName));
+                tableSettings.setVisible(true);
+                tableSettings.setTableName(tableName);
+                tableSettings.setDbId(newMetadata.getId());
+                tableSettings.setStrCols(Lists.newArrayList());
+                tableSettings.setColumns(Lists.newArrayList());
+                for (String columnName : columnNames) {
+                    ColumnSettings columnSettings = new ColumnSettings();
+                    columnSettings.setName(columnName);
+                    columnSettings.setPrintable(resolveName(columnName));
+                    columnSettings.setVisible(true);
+                    columnSettings.setStrEnable(false);
+                    tableSettings.getColumns().add(columnSettings);
+                }
+            }
+            tableSettings = tableSettingsRepository.save(tableSettings);
+        }
+    }
+
     private void updateTableMetadata(DBMetadata newMetadata) {
+//TODO clean from old metadata
         List<TableMetadata> tables = tableMetadataRepository.findAllTables(newMetadata.getId());
         Map<String, TableMetadata> tableMetadataMap = Maps.newHashMap();
         for (TableMetadata table : tables) {
@@ -243,5 +312,30 @@ public class AppServiceImpl implements AppService {
 
     public String resolveName(String tableName) {
         return WordUtils.capitalize(tableName.replaceAll("[_-]+", " ").replaceAll("\\s+", " "));
+    }
+
+    @Override
+    public void saveSettings(String tableName, TableSettings tableSettings) {
+        //TODO check all
+        DBMetadata currentDb = getCurrentDb();
+        TableSettings oldTableSettings = tableSettingsRepository.findByTableAndDb(tableName, currentDb.getId());
+        oldTableSettings.setColumns(tableSettings.getColumns());
+        oldTableSettings.setStrCols(tableSettings.getStrCols());
+        oldTableSettings.setPrintable(tableSettings.getPrintable());
+        oldTableSettings.setVisible(tableSettings.getVisible());
+        tableSettingsRepository.save(oldTableSettings);
+    }
+
+    @Override
+    public TableSettings getTableSettings(String tableName) {
+        DBMetadata currentDb = getCurrentDb();
+        return tableSettingsRepository.findByTableAndDb(tableName, currentDb.getId());
+    }
+
+    @Override
+    public String getTableViewName(String tableName) {
+        DBMetadata currentDb = getCurrentDb();
+        TableSettings tableSettings = tableSettingsRepository.findByTableAndDb(tableName, currentDb.getId());
+        return tableSettings.getPrintable();
     }
 }

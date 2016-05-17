@@ -4,28 +4,6 @@
 <#include "main_template.ftl"/>
 <#macro body_macro>
 <div class="">
-    <div class="page-title">
-        <div class="title_left">
-            <h3>
-                Users
-                <small>
-                    Some examples to get you started
-                </small>
-            </h3>
-        </div>
-
-        <div class="title_right">
-            <div class="col-md-5 col-sm-5 col-xs-12 form-group pull-right top_search">
-                <div class="input-group">
-                    <input type="text" class="form-control" placeholder="Search for...">
-                  <span class="input-group-btn">
-                            <button class="btn btn-default" type="button">Go!</button>
-                        </span>
-                </div>
-            </div>
-        </div>
-    </div>
-    <div class="clearfix"></div>
 
     <div class="row">
 
@@ -38,15 +16,16 @@
                     <ul class="nav navbar-right panel_toolbox">
                         <li><a class="collapse-link"><i class="fa fa-chevron-up"></i></a>
                         </li>
-                        <li class="dropdown">
-                            <a href="#" class="dropdown-toggle" data-toggle="dropdown" role="button" aria-expanded="false"><i class="fa fa-wrench"></i></a>
-                            <ul class="dropdown-menu" role="menu">
-                                <li><a href="#">Settings 1</a>
-                                </li>
-                                <li><a href="#">Settings 2</a>
-                                </li>
-                            </ul>
-                        </li>
+                    <#--<li class="dropdown">-->
+                    <#--<a href="#" class="dropdown-toggle" data-toggle="dropdown" role="button" aria-expanded="false"><i class="fa fa-wrench"></i></a>-->
+                    <#--<ul class="dropdown-menu" role="menu">-->
+                    <#--<li><a href="#">Settings 1</a>-->
+                    <#--</li>-->
+                    <#--<li><a href="#">Settings 2</a>-->
+                    <#--</li>-->
+                    <#--</ul>-->
+                    <#--</li>-->
+                        <li><a href="/table/settings/${tableName}"><i class="fa fa-wrench"></i></a></li>
                         <li><a class="close-link"><i class="fa fa-close"></i></a>
                         </li>
                     </ul>
@@ -56,11 +35,21 @@
                     <p class="text-muted font-13 m-b-30">
                         You can search, sort and make page requests for this table
                     </p>
-                    <table id="datatable1" class="table table-striped table-bordered">
+                    <div class="title_right">
+                        <div class="col-md-5 col-sm-5 col-xs-12 form-group pull-right top_search">
+                            <div class="input-group">
+                                <input type="text" class="form-control" placeholder="Search for...">
+                  <span class="input-group-btn">
+                            <button class="btn btn-default" type="button">Go!</button>
+                        </span>
+                            </div>
+                        </div>
+                    </div>
+                    <table id="datatable1" class="table table-striped table-bordered dataTable no-footer dtr-inline">
                         <thead>
-                        <tr>
+                        <tr role="row">
                             <#list headers as header>
-                                <th>${header}</th>
+                                <th class="sorting" data-order="0" data-column="${header.val}">${header.str}</th>
                             </#list>
                         </tr>
                         </thead>
@@ -86,46 +75,15 @@
 </div>
 </#macro>
 <#macro footer_script_macro>
-<script>
-    var handleDataTableButtons = function () {
-                "use strict";
-                0 !== $("#datatable-buttons").length && $("#datatable-buttons").DataTable({
-                    dom: "Bfrtip",
-                    buttons: [{
-                        extend: "copy",
-                        className: "btn-sm"
-                    }, {
-                        extend: "csv",
-                        className: "btn-sm"
-                    }, {
-                        extend: "excel",
-                        className: "btn-sm"
-                    }, {
-                        extend: "pdf",
-                        className: "btn-sm"
-                    }, {
-                        extend: "print",
-                        className: "btn-sm"
-                    }],
-                    responsive: !0
-                })
-            },
-            TableManageButtons = function () {
-                "use strict";
-                return {
-                    init: function () {
-                        handleDataTableButtons()
-                    }
-                }
-            }();
-</script>
 <script type="text/javascript">
     $(document).ready(function () {
         var lastData = null;
         var filterObj = {
             page: 0,
             query: "",
-            size: 10
+            size: 10,
+            sort: "",
+            order: 0
         };
 
         function generateRows(data) {
@@ -152,11 +110,50 @@
             }
             var content = '';
             for (var i = 1; i <= pages; i++) {
-                content += "\<button class=\"btn btn-success js-page-select\" type=\"button\"\>" + i + "\</button>";
+                var setActive = (i - 1) == filterObj.page ? " active" : "";
+                content += "\<button class=\"btn btn-success js-page-select" + setActive + "\" type=\"button\"\>" + i + "\</button>";
             }
             $("#pages-selector").html(content);
             $(".js-page-select").click(function (e) {
                 filterObj.page = parseInt($(this).text()) - 1;
+                loadData();
+            });
+        }
+
+        function initSortControllers() {
+            var headers = $("#datatable1 > thead > tr > th");
+            $("#datatable1 > thead > tr > th").click(function (e) {
+                e.preventDefault();
+                var $this = $(this);
+                var currentOrder = parseInt($this.attr('data-order'));
+                var currentColumn = $this.data('column');
+                console.log("Was: " + currentOrder + " " + currentColumn);
+                headers.each(function (i, header) {
+                    var $header = $(header);
+                    $header.attr('data-order', 0);
+                    $header.removeClass('sorting sorting_asc sorting_desc');
+                    if ($this.data('column') != $header.data('column')) {
+                        $header.addClass('sorting');
+                    }
+                });
+                if (currentOrder == 0) {
+                    currentOrder = 1;
+                    $this.attr('data-order', 1);
+                    $this.addClass('sorting_asc');
+                } else if (currentOrder == 1) {
+                    currentOrder = -1;
+                    $this.attr('data-order', -1);
+                    $this.addClass('sorting_desc');
+                } else {
+                    currentOrder = 0;
+                    currentColumn = "";
+                    $this.attr('data-order', 0);
+                    $this.addClass('sorting');
+                }
+                filterObj.order = currentOrder;
+                filterObj.sort = currentColumn;
+                filterObj.page = 0;
+                console.log("Set: " + currentOrder + " " + currentColumn);
                 loadData();
             });
         }
@@ -178,10 +175,12 @@
 
         if (lastData == null) {
             loadData();
+            initSortControllers();
         }
+
+
 //        $('#datatable').dataTable();
     });
-    TableManageButtons.init();
 </script>
 </#macro>
 
