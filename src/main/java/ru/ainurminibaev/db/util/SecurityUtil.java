@@ -4,6 +4,7 @@ import java.sql.Connection;
 
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.context.SecurityContextHolder;
+import ru.ainurminibaev.db.model.DbType;
 import ru.ainurminibaev.db.security.DBConnectionAuthToken;
 
 /**
@@ -33,5 +34,19 @@ public class SecurityUtil {
             return null;
         }
         return authToken.getHost();
+    }
+
+
+    public static DbType getDbType() {
+        Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
+        if (!(authentication instanceof DBConnectionAuthToken)) {
+            return null;
+        }
+        DBConnectionAuthToken authToken = (DBConnectionAuthToken) authentication;
+        if (authToken == null) {
+            return null;
+        }
+        //TODO detect driver
+        return DbType.PSQL;
     }
 }

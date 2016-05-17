@@ -25,6 +25,8 @@ public class DBMetadata {
 
     private Date updated;
 
+    private DbType type;
+
     public String getId() {
         return id;
     }
