@@ -28,6 +28,8 @@ public class TableMetadata {
     @Field("column_types")
     private Map<String, DBDataType> columnTypes;
 
+    private Map<String, ReferenceTable> columnsReference;
+
     public String getTableName() {
         return tableName;
     }
@@ -66,5 +68,13 @@ public class TableMetadata {
 
     public void setId(String id) {
         this.id = id;
+    }
+
+    public Map<String, ReferenceTable> getColumnsReference() {
+        return columnsReference;
+    }
+
+    public void setColumnsReference(Map<String, ReferenceTable> columnsReference) {
+        this.columnsReference = columnsReference;
     }
 }

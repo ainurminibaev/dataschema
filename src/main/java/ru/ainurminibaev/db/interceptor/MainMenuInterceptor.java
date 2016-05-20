@@ -8,6 +8,7 @@ import org.springframework.stereotype.Component;
 import org.springframework.web.servlet.ModelAndView;
 import org.springframework.web.servlet.handler.HandlerInterceptorAdapter;
 import ru.ainurminibaev.db.service.AppService;
+import ru.ainurminibaev.db.util.SecurityUtil;
 
 /**
  * Created by ainurminibaev on 19.04.16.
@@ -20,7 +21,9 @@ public class MainMenuInterceptor extends HandlerInterceptorAdapter {
 
     @Override
     public void postHandle(HttpServletRequest request, HttpServletResponse response, Object handler, ModelAndView modelAndView) throws Exception {
-        modelAndView.addObject("tableNames", appService.getTableNames());
+        if (SecurityUtil.getConnection() != null) {
+            modelAndView.addObject("tableNames", appService.getTableNames());
+        }
         super.postHandle(request, response, handler, modelAndView);
     }
 }

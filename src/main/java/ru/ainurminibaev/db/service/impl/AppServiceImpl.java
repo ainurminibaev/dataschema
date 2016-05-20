@@ -23,6 +23,7 @@ import ru.ainurminibaev.db.dto.TableDataResponse;
 import ru.ainurminibaev.db.dto.TableViewRow;
 import ru.ainurminibaev.db.model.ColumnSettings;
 import ru.ainurminibaev.db.model.DBMetadata;
+import ru.ainurminibaev.db.model.ReferenceTable;
 import ru.ainurminibaev.db.model.TableMetadata;
 import ru.ainurminibaev.db.model.TableSettings;
 import ru.ainurminibaev.db.repository.DBMetadataRepository;
@@ -49,7 +50,7 @@ public class AppServiceImpl implements AppService {
     TableSettingsRepository tableSettingsRepository;
 
     @Autowired
-    @Qualifier("abstractDbReader")
+    @Qualifier("dbReaderWrapper")
     DatabaseReader databaseReader;
 
     @Override
@@ -121,8 +122,7 @@ public class AppServiceImpl implements AppService {
 
         DBMetadata currentDb = getCurrentDb();
         TableMetadata tableMetadata = tableMetadataRepository.findByTableAndDb(tableName, currentDb.getId());
-        List<String> columns = tableMetadata.getColumns();
-        List<TableViewRow> tableViewRows = databaseReader.getTableData(tableName, page, size, sortColumn, sortEnum, columns);
+        List<TableViewRow> tableViewRows = databaseReader.getTableData(tableName, page, size, sortColumn, sortEnum, tableMetadata);
 
         tableDataResponse.setData(tableViewRows);
         tableDataResponse.setRecordsFiltered(tableViewRows.size());
@@ -197,6 +197,8 @@ public class AppServiceImpl implements AppService {
             }
             //TODO load schema
             tableMetadata.setColumns(columnNames);
+            Map<String, ReferenceTable> referenceTableMap = databaseReader.getTableReferences(tableName);
+            tableMetadata.setColumnsReference(referenceTableMap);
             tableMetadata = tableMetadataRepository.save(tableMetadata);
         }
     }
