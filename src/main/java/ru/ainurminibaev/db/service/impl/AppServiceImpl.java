@@ -29,6 +29,7 @@ import ru.ainurminibaev.db.model.TableSettings;
 import ru.ainurminibaev.db.repository.DBMetadataRepository;
 import ru.ainurminibaev.db.repository.TableMetadataRepository;
 import ru.ainurminibaev.db.repository.TableSettingsRepository;
+import ru.ainurminibaev.db.security.DBConnectionAuthToken;
 import ru.ainurminibaev.db.service.AppService;
 import ru.ainurminibaev.db.service.DatabaseReader;
 import ru.ainurminibaev.db.util.SecurityUtil;
@@ -141,6 +142,12 @@ public class AppServiceImpl implements AppService {
         newMetadata.setTables(databaseReader.retrieveTableNames());
         if (newMetadata.getTables() == null || newMetadata.getTables().size() == 0) {
             return newMetadata;
+        }
+        DBConnectionAuthToken authToken = SecurityUtil.authToken();
+        if (authToken != null) {
+            newMetadata.setType(SecurityUtil.getDbType());
+            newMetadata.setLogin(authToken.getUname());
+            newMetadata.setPassword(authToken.getPassword());
         }
         newMetadata = dbMetadataRepository.save(newMetadata);
         updateTableMetadata(newMetadata);

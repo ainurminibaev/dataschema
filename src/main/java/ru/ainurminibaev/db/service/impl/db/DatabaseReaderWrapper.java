@@ -1,9 +1,12 @@
 package ru.ainurminibaev.db.service.impl.db;
 
+import javax.swing.table.DefaultTableModel;
+import java.sql.SQLException;
 import java.util.List;
 import java.util.Map;
 
 import org.apache.commons.lang3.tuple.Pair;
+import org.springframework.beans.factory.BeanFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.stereotype.Service;
@@ -19,13 +22,14 @@ import ru.ainurminibaev.db.repository.DBMetadataRepository;
 import ru.ainurminibaev.db.repository.TableMetadataRepository;
 import ru.ainurminibaev.db.repository.TableSettingsRepository;
 import ru.ainurminibaev.db.service.DatabaseReader;
+import ru.ainurminibaev.db.service.DatabaseReaderSelector;
 import ru.ainurminibaev.db.util.SecurityUtil;
 
 /**
  * Created by ainurminibaev on 18.05.16.
  */
 @Service("dbReaderWrapper")
-public class DatabaseReaderWrapper implements DatabaseReader {
+public class DatabaseReaderWrapper implements DatabaseReader, DatabaseReaderSelector {
 
     @Autowired
     @Qualifier("psqlDbReader")
@@ -40,11 +44,19 @@ public class DatabaseReaderWrapper implements DatabaseReader {
     @Autowired
     TableSettingsRepository tableSettingsRepository;
 
+    @Autowired
+    private BeanFactory beanFactory;
+
     private DatabaseReader selectReader() {
         DbType dbType = SecurityUtil.getDbType();
+        return selectReader(dbType);
+    }
+
+    private DatabaseReader selectReader(DbType dbType, Object... args) {
+        //TODO bump Spring version
         switch (dbType) {
             case PSQL:
-                return psqlDatabaseReader;
+                return (DatabaseReader) beanFactory.getBean(PSQLDatabaseReader.PSQL_DB_READER, args);
             case MYSQL:
                 return null;
         }
@@ -108,5 +120,16 @@ public class DatabaseReaderWrapper implements DatabaseReader {
     @Override
     public Map<String, ReferenceTable> getTableReferences(String tableName) {
         return selectReader().getTableReferences(tableName);
+    }
+
+    @Override
+    public DefaultTableModel getDataForReport(String sql) throws SQLException {
+        return selectReader().getDataForReport(sql);
+    }
+
+    @Override
+    public DatabaseReader getDbReader(String dbId) {
+        DBMetadata dbMetadata = dbMetadataRepository.findOne(dbId);
+        return selectReader(dbMetadata.getType(), dbMetadata);
     }
 }

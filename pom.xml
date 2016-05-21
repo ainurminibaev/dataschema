@@ -15,7 +15,6 @@
         <poi.version>3.10.1</poi.version>
         <validation-api.version>1.1.0.Final</validation-api.version>
         <spring-security-crypto.version>3.2.3.RELEASE</spring-security-crypto.version>
-        <org.springframework.security.version>3.2.3.RELEASE</org.springframework.security.version>
     </properties>
 
     <name>dbschema-ui</name>
@@ -194,6 +193,26 @@
             <version>2.13.0</version>
         </dependency>
 
+        <dependency>
+            <groupId>org.jfree</groupId>
+            <artifactId>jfreechart</artifactId>
+            <version>1.0.19</version>
+        </dependency>
+
+        <!--&lt;!&ndash; http://mvnrepository.com/artifact/com.cloudinary/cloudinary &ndash;&gt;-->
+        <!--<dependency>-->
+            <!--<groupId>com.cloudinary</groupId>-->
+            <!--<artifactId>cloudinary</artifactId>-->
+            <!--<version>1.0.14</version>-->
+        <!--</dependency>-->
+
+        <dependency>
+            <groupId>com.cloudinary</groupId>
+            <artifactId>cloudinary-http44</artifactId>
+            <version>1.4.2</version>
+        </dependency>
+
+
     </dependencies>
     <build>
         <finalName>music-search</finalName>
@@ -261,6 +280,16 @@
             <id>org.jboss.repository.releases</id>
             <name>JBoss Maven Release Repository</name>
             <url>https://repository.jboss.org/nexus/content/repositories/releases</url>
+        </repository>
+        <repository>
+            <id>id1</id>
+            <name>JFree Chart Repository</name>
+            <url>http://mvnrepository.com/artifact/org.jfree/jfreechart</url>
+        </repository>
+        <repository>
+            <id>id2</id>
+            <name>cloudinary Repository</name>
+            <url>http://mvnrepository.com/artifact/com.cloudinary/cloudinary</url>
         </repository>
     </repositories>
 

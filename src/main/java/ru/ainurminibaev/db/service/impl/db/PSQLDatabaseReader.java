@@ -1,34 +1,38 @@
 package ru.ainurminibaev.db.service.impl.db;
 
+import javax.swing.table.DefaultTableModel;
 import java.sql.Connection;
 import java.sql.DatabaseMetaData;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
+import java.sql.ResultSetMetaData;
 import java.sql.SQLException;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
+import java.util.Vector;
 
 import com.google.common.base.Joiner;
 import com.google.common.collect.Lists;
 import com.google.common.collect.Maps;
 import org.apache.commons.lang3.tuple.Pair;
+import org.springframework.context.annotation.Scope;
 import org.springframework.stereotype.Service;
 import ru.ainurminibaev.db.dto.SortEnum;
 import ru.ainurminibaev.db.dto.TableViewCol;
 import ru.ainurminibaev.db.dto.TableViewRow;
+import ru.ainurminibaev.db.model.DBMetadata;
 import ru.ainurminibaev.db.model.ReferenceTable;
 import ru.ainurminibaev.db.model.TableMetadata;
-import ru.ainurminibaev.db.service.DatabaseReader;
-import ru.ainurminibaev.db.util.SecurityUtil;
 
 import static ru.ainurminibaev.db.service.impl.AppServiceImpl.DEFAULT_ROW_COUNT;
 
 /**
  * Created by ainurminibaev on 18.05.16.
  */
-@Service("psqlDbReader")
-public class PSQLDatabaseReader implements DatabaseReader {
+@Service(PSQLDatabaseReader.PSQL_DB_READER)
+@Scope(value = "prototype")
+public class PSQLDatabaseReader extends AbstractDbReader {
 
     public static final String TABLE_REFERENCE_SQL = "SELECT\n" +
             "  tc.constraint_name,\n" +
@@ -43,12 +47,21 @@ public class PSQLDatabaseReader implements DatabaseReader {
             "  JOIN information_schema.constraint_column_usage AS ccu\n" +
             "    ON ccu.constraint_name = tc.constraint_name\n" +
             "WHERE constraint_type = 'FOREIGN KEY' AND tc.table_name = '%s'";
+    public static final String PSQL_DB_READER = "psqlDbReader";
+
+    public PSQLDatabaseReader() {
+        super(null);
+    }
+
+    public PSQLDatabaseReader(DBMetadata dbMetadata) {
+        super(dbMetadata);
+    }
 
     @Override
     public List<String> retrieveTableNames() {
         List<String> tableNames = Lists.newArrayList();
         try {
-            DatabaseMetaData metaData = SecurityUtil.getConnection().getMetaData();
+            DatabaseMetaData metaData = getConnection().getMetaData();
 
             String tableType[] = {"TABLE"};
 
@@ -86,7 +99,7 @@ public class PSQLDatabaseReader implements DatabaseReader {
     public List<String> getColumnNames(String tableName) {
         List<String> tableNames = Lists.newArrayList();
         try {
-            DatabaseMetaData metaData = SecurityUtil.getConnection().getMetaData();
+            DatabaseMetaData metaData = getConnection().getMetaData();
 
             ResultSet result = metaData.getColumns(null, "public", tableName, null);
             while (result.next()) {
@@ -108,7 +121,7 @@ public class PSQLDatabaseReader implements DatabaseReader {
             size = DEFAULT_ROW_COUNT;
         }
         ArrayList<TableViewRow> tableViewRows = Lists.newArrayList();
-        Connection conn = SecurityUtil.getConnection();
+        Connection conn = getConnection();
         try {
             //TODO prepared statement
             String sql = "SELECT " + Joiner.on(",").join(tableMetadata.getColumns()) + " FROM " + tableName;
@@ -137,7 +150,7 @@ public class PSQLDatabaseReader implements DatabaseReader {
 
     @Override
     public Integer getMaxCount(String tableName) {
-        Connection conn = SecurityUtil.getConnection();
+        Connection conn = getConnection();
         try {
             //TODO prepared statement
             PreparedStatement preparedStatement = conn.prepareStatement("SELECT COUNT(*) FROM " + tableName);
@@ -156,7 +169,7 @@ public class PSQLDatabaseReader implements DatabaseReader {
         if (strFields == null || strFields.length == 0 || id == null || primaryColumn == null) {
             return id == null ? null : id.toString();
         }
-        Connection conn = SecurityUtil.getConnection();
+        Connection conn = getConnection();
         try {
             //TODO prepared statement
             PreparedStatement preparedStatement = conn.prepareStatement("SELECT " + Joiner.on(",").join(strFields) + " FROM " + tableName + " WHERE " + primaryColumn + "=" + id.toString());
@@ -178,7 +191,7 @@ public class PSQLDatabaseReader implements DatabaseReader {
     @Override
     public Pair<String, String> getColumnReference(String tableName, String columnName) {
         String sql = String.format(TABLE_REFERENCE_SQL + " and kcu.column_name='%s'", tableName, columnName);
-        Connection conn = SecurityUtil.getConnection();
+        Connection conn = getConnection();
         try {
             PreparedStatement preparedStatement = conn.prepareStatement(sql);
             ResultSet rs = preparedStatement.executeQuery();
@@ -198,7 +211,7 @@ public class PSQLDatabaseReader implements DatabaseReader {
     public Map<String, ReferenceTable> getTableReferences(String tableName) {
         Map<String, ReferenceTable> resultMap = Maps.newHashMap();
         String sql = String.format(TABLE_REFERENCE_SQL, tableName);
-        Connection conn = SecurityUtil.getConnection();
+        Connection conn = getConnection();
         try {
             PreparedStatement preparedStatement = conn.prepareStatement(sql);
             ResultSet rs = preparedStatement.executeQuery();
@@ -213,6 +226,38 @@ public class PSQLDatabaseReader implements DatabaseReader {
             e.printStackTrace();
         }
         return resultMap;
+    }
+
+    @Override
+    public DefaultTableModel getDataForReport(String sql) throws SQLException {
+        List<Map<String, Integer>> result = new ArrayList<>();
+        Connection conn = getConnection();
+        PreparedStatement preparedStatement = conn.prepareStatement(sql);
+        ResultSet rs = preparedStatement.executeQuery();
+        ResultSetMetaData metaData = rs.getMetaData();
+        int numberOfColumns = metaData.getColumnCount();
+        Vector columnNames = new Vector();
+
+        // Get the column names
+        for (int column = 0; column < numberOfColumns; column++) {
+            columnNames.addElement(metaData.getColumnLabel(column + 1));
+        }
+
+        // Get all rows.
+        Vector rows = new Vector();
+
+        while (rs.next()) {
+            Vector newRow = new Vector();
+
+            for (int i = 1; i <= numberOfColumns; i++) {
+                newRow.addElement(rs.getObject(i));
+            }
+
+            rows.addElement(newRow);
+        }
+        DefaultTableModel tableModel = new DefaultTableModel(rows, columnNames);
+        return tableModel;
+//        return result;
     }
 
 }

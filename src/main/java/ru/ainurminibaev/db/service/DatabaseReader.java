@@ -1,5 +1,7 @@
 package ru.ainurminibaev.db.service;
 
+import javax.swing.table.DefaultTableModel;
+import java.sql.SQLException;
 import java.util.List;
 import java.util.Map;
 
@@ -26,5 +28,7 @@ public interface DatabaseReader {
     Pair<String, String> getColumnReference(String tableName, String columnName);
 
     Map<String, ReferenceTable> getTableReferences(String tableName);
+
+    DefaultTableModel getDataForReport(String sql) throws SQLException;
 
 }

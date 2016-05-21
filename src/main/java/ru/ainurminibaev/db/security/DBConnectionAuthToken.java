@@ -21,13 +21,11 @@ public class DBConnectionAuthToken extends AbstractAuthenticationToken {
     }
 
     public void init() {
+        //TODO detect driver and set Type here
         String driver = "org.postgresql.Driver";
-        String url = "jdbc:postgresql://localhost:5432/gamification_2015";
-        String username = "postgres";
-        String password = "postgres";
         try {
             Class.forName(driver);
-            connection = DriverManager.getConnection(url, username, password);
+            connection = DriverManager.getConnection(host, uname, password);
         } catch (ClassNotFoundException e) {
             e.printStackTrace();
         } catch (SQLException e) {

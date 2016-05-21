@@ -2,11 +2,9 @@ package ru.ainurminibaev.db.model;
 
 import java.util.Date;
 import java.util.List;
-import java.util.Map;
 
 import org.springframework.data.annotation.Id;
 import org.springframework.data.mongodb.core.mapping.Document;
-import ru.ainurminibaev.db.model.enums.DBDataType;
 
 /**
  * Created by ainurminibaev on 11.05.16.
@@ -18,6 +16,10 @@ public class DBMetadata {
     private String id;
 
     private String url;
+
+    private String login;
+
+    private String password;
 
     private List<String> tables;
 
@@ -65,5 +67,29 @@ public class DBMetadata {
 
     public Date getUpdated() {
         return updated;
+    }
+
+    public String getLogin() {
+        return login;
+    }
+
+    public void setLogin(String login) {
+        this.login = login;
+    }
+
+    public String getPassword() {
+        return password;
+    }
+
+    public void setPassword(String password) {
+        this.password = password;
+    }
+
+    public DbType getType() {
+        return type;
+    }
+
+    public void setType(DbType type) {
+        this.type = type;
     }
 }
