@@ -15,11 +15,17 @@ public class ChartTask {
     public static final String NAME = "name";
     public static final String CHART_TYPE = "chart_type";
     public static final String PERIOD_TYPE = "period_type";
+    public static final String SLACK_PERIOD_TYPE = "slack_period_type";
     public static final String PERIOD = "period";
+    public static final String SLACK_PERIOD = "slack_period";
     public static final String UPDATE_TYPE = "update_type";
+    public static final String SLACK_SEND_TIME = "slack_send_time";
     public static final String LAST_UPDATE = "last_update";
     public static final String SQL = "sql";
     public static final String DB_ID = "db_id";
+    public static final String SLACK_URL = "slack_url";
+    public static final String ENABLE_SLACK = "enable_slack";
+    public static final String SLACK_LAST_SEND = "slack_last_send";
     @Id
     private String id;
 
@@ -47,6 +53,24 @@ public class ChartTask {
 
     @Field(SQL)
     private String sql;
+
+    @Field(SLACK_URL)
+    private String slackWebhookUrl;
+
+    @Field(ENABLE_SLACK)
+    private Boolean enableSlackNotification;
+
+    @Field(SLACK_PERIOD_TYPE)
+    private PeriodType slackPeriodType;
+
+    @Field(SLACK_PERIOD)
+    private int slackPeriod;
+
+    @Field(SLACK_SEND_TIME)
+    private long slackSendTime;
+
+    @Field(SLACK_LAST_SEND)
+    private long slackLastSendTime;
 
     public String getId() {
         return id;
@@ -122,5 +146,53 @@ public class ChartTask {
 
     public void setDbId(String dbId) {
         this.dbId = dbId;
+    }
+
+    public String getSlackWebhookUrl() {
+        return slackWebhookUrl;
+    }
+
+    public void setSlackWebhookUrl(String slackWebhookUrl) {
+        this.slackWebhookUrl = slackWebhookUrl;
+    }
+
+    public Boolean getEnableSlackNotification() {
+        return enableSlackNotification;
+    }
+
+    public void setEnableSlackNotification(Boolean enableSlackNotification) {
+        this.enableSlackNotification = enableSlackNotification;
+    }
+
+    public PeriodType getSlackPeriodType() {
+        return slackPeriodType;
+    }
+
+    public void setSlackPeriodType(PeriodType slackPeriodType) {
+        this.slackPeriodType = slackPeriodType;
+    }
+
+    public int getSlackPeriod() {
+        return slackPeriod;
+    }
+
+    public void setSlackPeriod(int slackPeriod) {
+        this.slackPeriod = slackPeriod;
+    }
+
+    public long getSlackSendTime() {
+        return slackSendTime;
+    }
+
+    public void setSlackSendTime(long slackSendTime) {
+        this.slackSendTime = slackSendTime;
+    }
+
+    public long getSlackLastSendTime() {
+        return slackLastSendTime;
+    }
+
+    public void setSlackLastSendTime(long slackLastSendTime) {
+        this.slackLastSendTime = slackLastSendTime;
     }
 }

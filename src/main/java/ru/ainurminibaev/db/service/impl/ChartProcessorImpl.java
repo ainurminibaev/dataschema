@@ -15,6 +15,10 @@ import java.util.Map;
 
 import com.cloudinary.Cloudinary;
 import com.cloudinary.utils.ObjectUtils;
+import com.google.common.collect.Lists;
+import net.gpedro.integrations.slack.SlackApi;
+import net.gpedro.integrations.slack.SlackAttachment;
+import net.gpedro.integrations.slack.SlackMessage;
 import org.jfree.chart.ChartFactory;
 import org.jfree.chart.JFreeChart;
 import org.jfree.data.general.DefaultPieDataset;
@@ -69,6 +73,9 @@ public class ChartProcessorImpl implements ChartProcessor {
                     chartResult.setChartId(chartTask.getId());
                     chartResult.setDataTable(reportData);
                     chartResult.setExecutionTime(System.currentTimeMillis() - now);
+                    String chartName = "";
+                    String chartImageUrl = "";
+                    JFreeChart chart = null;
                     if (chartTask.getChartType() == ChartType.COUNT_ALL_PIE) {
                         DefaultPieDataset dataset = new DefaultPieDataset();
                         for (int i = 0; i < reportData.getRowCount(); i++) {
@@ -76,13 +83,16 @@ public class ChartProcessorImpl implements ChartProcessor {
                             Long val = Long.valueOf(reportData.getValueAt(i, 1).toString());
                             dataset.setValue(key, val);
                         }
-                        JFreeChart chart = ChartFactory.createPieChart(
-                                "Pie Chart: " + chartTask.getName() + " from " + dateFormat.format(nowDate),  // chart title
+                        chartName = "Pie Chart: " + chartTask.getName() + " from " + dateFormat.format(nowDate);
+                        chart = ChartFactory.createPieChart(
+                                chartName,  // chart title
                                 dataset,             // data
                                 true,               // include legend
                                 true,
                                 false
                         );
+                    }
+                    if (chart != null) {
                         BufferedImage chartBufferedImage = chart.createBufferedImage(600, 800);
                         try {
                             //TODO counts and file temp path
@@ -91,11 +101,13 @@ public class ChartProcessorImpl implements ChartProcessor {
                             FileOutputStream saveFileStream = new FileOutputStream(path);
                             ImageIO.write(chartBufferedImage, "png", saveFileStream);
                             Map uploadResult = cloudinary.uploader().upload(path, ObjectUtils.emptyMap());
-                            chartResult.setImageLink(uploadResult.get("url").toString());
+                            chartImageUrl = uploadResult.get("url").toString();
+                            chartResult.setImageLink(chartImageUrl);
                             new File(path).delete();
                         } catch (IOException e) {
                             e.printStackTrace();
                         }
+                        sendSlackMessage(chartTask, chartResult, chartName, chartImageUrl);
                     }
                     chartResultRepository.save(chartResult);
                 } catch (SQLException e) {
@@ -104,6 +116,20 @@ public class ChartProcessorImpl implements ChartProcessor {
                 chartTask.setLastUpdate(now);
                 chartTaskRepository.save(chartTask);
             }
+        }
+    }
+
+    private void sendSlackMessage(ChartTask chartTask, ChartResult chartResult, String chartName, String url) {
+        Long now = new Date().getTime();
+        Long lastSend = chartTask.getSlackLastSendTime();
+        if (Boolean.TRUE.equals(chartTask.getEnableSlackNotification()) && (now - lastSend > chartTask.getSlackSendTime())) {
+            SlackApi api = new SlackApi(chartTask.getSlackWebhookUrl());
+            SlackMessage message = new SlackMessage("DbSchema Bot", "Chart Report for your " + chartName);
+            SlackAttachment slackAttachment = new SlackAttachment().setImageUrl(url);
+            slackAttachment.setFallback(chartName);
+            message.setAttachments(Lists.newArrayList(slackAttachment));
+            api.call(message);
+            chartTask.setSlackLastSendTime(now);
         }
     }
 }
