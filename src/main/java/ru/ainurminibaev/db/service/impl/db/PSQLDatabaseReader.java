@@ -21,9 +21,11 @@ import org.springframework.stereotype.Service;
 import ru.ainurminibaev.db.dto.SortEnum;
 import ru.ainurminibaev.db.dto.TableViewCol;
 import ru.ainurminibaev.db.dto.TableViewRow;
+import ru.ainurminibaev.db.model.ColumnSettings;
 import ru.ainurminibaev.db.model.DBMetadata;
 import ru.ainurminibaev.db.model.ReferenceTable;
 import ru.ainurminibaev.db.model.TableMetadata;
+import ru.ainurminibaev.db.model.TableSettings;
 
 import static ru.ainurminibaev.db.service.impl.AppServiceImpl.DEFAULT_ROW_COUNT;
 
@@ -113,7 +115,7 @@ public class PSQLDatabaseReader extends AbstractDbReader {
     }
 
     @Override
-    public List<TableViewRow> getTableData(String tableName, Integer page, Integer size, String sortColumn, SortEnum sortEnum, TableMetadata tableMetadata) {
+    public List<TableViewRow> getTableData(String tableName, Integer page, Integer size, String sortColumn, SortEnum sortEnum, TableMetadata tableMetadata, TableSettings tableSettings) {
         if (page == null) {
             page = 0;
         }
@@ -135,6 +137,10 @@ public class PSQLDatabaseReader extends AbstractDbReader {
                 TableViewRow row = new TableViewRow();
                 row.setColumns(new ArrayList<>());
                 for (String column : tableMetadata.getColumns()) {
+                    ColumnSettings columnSettings = findSettingForColumn(column, tableSettings);
+                    if (columnSettings == null || Boolean.FALSE.equals(columnSettings.getVisible())) {
+                        continue;
+                    }
                     Object val = rs.getObject(column);
                     String strVal = val == null ? null : val.toString();
                     TableViewCol viewCol = new TableViewCol(strVal, strVal);
@@ -146,6 +152,15 @@ public class PSQLDatabaseReader extends AbstractDbReader {
             e.printStackTrace();
         }
         return tableViewRows;
+    }
+
+    private ColumnSettings findSettingForColumn(String column, TableSettings tableSettings) {
+        for (ColumnSettings columnSettings : tableSettings.getColumns()) {
+            if (columnSettings.getName().equals(column)) {
+                return columnSettings;
+            }
+        }
+        return null;
     }
 
     @Override
@@ -179,7 +194,7 @@ public class PSQLDatabaseReader extends AbstractDbReader {
                 for (int i = 0; i < strFields.length; i++) {
                     vals.add(rs.getObject(i + 1));
                 }
-                return Joiner.on(" ").join(vals);
+                return Joiner.on(" ").skipNulls().join(vals);
             }
         } catch (SQLException e) {
             e.printStackTrace();

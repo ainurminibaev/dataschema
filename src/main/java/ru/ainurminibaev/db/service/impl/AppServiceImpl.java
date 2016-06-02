@@ -103,7 +103,9 @@ public class AppServiceImpl implements AppService {
                 .map((column) -> {
                     for (ColumnSettings columnSettings : tableSettings.getColumns()) {
                         if (columnSettings.getName().equals(column)) {
-                            return new HeaderView(column, columnSettings.getPrintable());
+                            HeaderView headerView = new HeaderView(column, columnSettings.getPrintable());
+                            headerView.setVisible(columnSettings.getVisible());
+                            return headerView;
                         }
                     }
                     return new HeaderView(column);
@@ -123,7 +125,8 @@ public class AppServiceImpl implements AppService {
 
         DBMetadata currentDb = getCurrentDb();
         TableMetadata tableMetadata = tableMetadataRepository.findByTableAndDb(tableName, currentDb.getId());
-        List<TableViewRow> tableViewRows = databaseReader.getTableData(tableName, page, size, sortColumn, sortEnum, tableMetadata);
+        TableSettings tableSettings = tableSettingsRepository.findByTableAndDb(tableName, currentDb.getId());
+        List<TableViewRow> tableViewRows = databaseReader.getTableData(tableName, page, size, sortColumn, sortEnum, tableMetadata, tableSettings);
 
         tableDataResponse.setData(tableViewRows);
         tableDataResponse.setRecordsFiltered(tableViewRows.size());

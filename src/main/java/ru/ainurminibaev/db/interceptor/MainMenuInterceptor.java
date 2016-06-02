@@ -21,7 +21,7 @@ public class MainMenuInterceptor extends HandlerInterceptorAdapter {
 
     @Override
     public void postHandle(HttpServletRequest request, HttpServletResponse response, Object handler, ModelAndView modelAndView) throws Exception {
-        if (SecurityUtil.getConnection() != null) {
+        if (SecurityUtil.getConnection() != null && modelAndView != null) {
             modelAndView.addObject("tableNames", appService.getTableNames());
         }
         super.postHandle(request, response, handler, modelAndView);

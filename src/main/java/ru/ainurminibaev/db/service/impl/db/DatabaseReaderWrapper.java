@@ -4,6 +4,7 @@ import javax.swing.table.DefaultTableModel;
 import java.sql.SQLException;
 import java.util.List;
 import java.util.Map;
+import java.util.stream.Collectors;
 
 import org.apache.commons.lang3.tuple.Pair;
 import org.springframework.beans.factory.BeanFactory;
@@ -13,6 +14,7 @@ import org.springframework.stereotype.Service;
 import ru.ainurminibaev.db.dto.SortEnum;
 import ru.ainurminibaev.db.dto.TableViewCol;
 import ru.ainurminibaev.db.dto.TableViewRow;
+import ru.ainurminibaev.db.model.ColumnSettings;
 import ru.ainurminibaev.db.model.DBMetadata;
 import ru.ainurminibaev.db.model.DbType;
 import ru.ainurminibaev.db.model.ReferenceTable;
@@ -74,12 +76,13 @@ public class DatabaseReaderWrapper implements DatabaseReader, DatabaseReaderSele
     }
 
     @Override
-    public List<TableViewRow> getTableData(String tableName, Integer page, Integer size, String sortColumn, SortEnum sortEnum, TableMetadata tableMetadata) {
+    public List<TableViewRow> getTableData(String tableName, Integer page, Integer size, String sortColumn, SortEnum sortEnum, TableMetadata tableMetadata, TableSettings tableSettings) {
         String dbId = getCurrentDb().getId();
-        List<TableViewRow> tableDataList = selectReader().getTableData(tableName, page, size, sortColumn, sortEnum, tableMetadata);
+        List<TableViewRow> tableDataList = selectReader().getTableData(tableName, page, size, sortColumn, sortEnum, tableMetadata, tableSettings);
+        List<String> visibleColumns = getVisibleColumnNames(tableSettings);
         for (TableViewRow tableViewRow : tableDataList) {
             for (int i = 0; i < tableViewRow.getColumns().size(); i++) {
-                String colName = tableMetadata.getColumns().get(i);
+                String colName = visibleColumns.get(i);
                 TableViewCol tableViewCol = tableViewRow.getColumns().get(i);
                 ReferenceTable referenceTable = tableMetadata.getColumnsReference().get(colName);
                 if (referenceTable != null) {
@@ -94,6 +97,15 @@ public class DatabaseReaderWrapper implements DatabaseReader, DatabaseReaderSele
             }
         }
         return tableDataList;
+    }
+
+    private List<String> getVisibleColumnNames(TableSettings tableSettings) {
+        return tableSettings
+                .getColumns()
+                .stream()
+                .filter(ColumnSettings::getVisible)
+                .map(ColumnSettings::getName)
+                .collect(Collectors.toList());
     }
 
     private DBMetadata getCurrentDb() {

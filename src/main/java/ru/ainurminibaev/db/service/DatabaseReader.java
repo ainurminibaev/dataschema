@@ -10,6 +10,7 @@ import ru.ainurminibaev.db.dto.SortEnum;
 import ru.ainurminibaev.db.dto.TableViewRow;
 import ru.ainurminibaev.db.model.ReferenceTable;
 import ru.ainurminibaev.db.model.TableMetadata;
+import ru.ainurminibaev.db.model.TableSettings;
 
 /**
  * Created by ainurminibaev on 18.05.16.
@@ -19,7 +20,7 @@ public interface DatabaseReader {
 
     List<String> getColumnNames(String tableName);
 
-    List<TableViewRow> getTableData(String tableName, Integer page, Integer size, String sortColumn, SortEnum sortEnum, TableMetadata tableMetadata);
+    List<TableViewRow> getTableData(String tableName, Integer page, Integer size, String sortColumn, SortEnum sortEnum, TableMetadata tableMetadata, TableSettings tableSettings);
 
     Integer getMaxCount(String tableName);
 

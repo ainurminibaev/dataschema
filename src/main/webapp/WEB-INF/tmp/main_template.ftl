@@ -9,7 +9,25 @@
     <meta http-equiv="X-UA-Compatible" content="IE=edge">
     <meta name="viewport" content="width=device-width, initial-scale=1">
 
-    <title>Gentallela Alela! | </title>
+    <title>Data Schema </title>
+
+    <link rel="apple-touch-icon" sizes="57x57" href="/favs/apple-icon-57x57.png">
+    <link rel="apple-touch-icon" sizes="60x60" href="/favs/apple-icon-60x60.png">
+    <link rel="apple-touch-icon" sizes="72x72" href="/favs/apple-icon-72x72.png">
+    <link rel="apple-touch-icon" sizes="76x76" href="/favs/apple-icon-76x76.png">
+    <link rel="apple-touch-icon" sizes="114x114" href="/favs/apple-icon-114x114.png">
+    <link rel="apple-touch-icon" sizes="120x120" href="/favs/apple-icon-120x120.png">
+    <link rel="apple-touch-icon" sizes="144x144" href="/favs/apple-icon-144x144.png">
+    <link rel="apple-touch-icon" sizes="152x152" href="/favs/apple-icon-152x152.png">
+    <link rel="apple-touch-icon" sizes="180x180" href="/favs/apple-icon-180x180.png">
+    <link rel="icon" type="image/png" sizes="192x192"  href="/favs/android-icon-192x192.png">
+    <link rel="icon" type="image/png" sizes="32x32" href="/favs/favicon-32x32.png">
+    <link rel="icon" type="image/png" sizes="96x96" href="/favs/favicon-96x96.png">
+    <link rel="icon" type="image/png" sizes="16x16" href="/favs/favicon-16x16.png">
+    <link rel="manifest" href="/favs/manifest.json">
+    <meta name="msapplication-TileColor" content="#ffffff">
+    <meta name="msapplication-TileImage" content="/favs/ms-icon-144x144.png">
+    <meta name="theme-color" content="#ffffff">
 
     <!-- Bootstrap core CSS -->
 
@@ -43,7 +61,10 @@
             <div class="left_col scroll-view">
 
                 <div class="navbar nav_title" style="border: 0;">
-                    <a href="/index.html" class="site_title"><i class="fa fa-paw"></i> <span>Gentellela Alela!</span></a>
+                    <a href="index.html" class="site_title">
+                        <img src="https://cdn3.iconfinder.com/data/icons/databases-2-2/512/data_cube-512.png" height="40" style="padding-left: 5px;">
+                        <span>Data Schema</span>
+                    </a>
                 </div>
                 <div class="clearfix"></div>
 

@@ -32,42 +32,49 @@
                     <div class="clearfix"></div>
                 </div>
                 <div class="x_content">
-                    <p class="text-muted font-13 m-b-30">
-                        You can search, sort and make page requests for this table
-                    </p>
-                    <div class="title_right">
-                        <div class="col-md-5 col-sm-5 col-xs-12 form-group pull-right top_search">
-                            <div class="input-group">
-                                <input type="text" class="form-control" placeholder="Search for...">
+                    <div class="page-title">
+                        <div class="title_left">
+                            <br>
+                            <p class="text-muted font-13 m-b-30">
+                                You can search, sort and make page requests for this table
+                            </p>
+                        </div>
+                        <div class="title_right">
+                            <div class="col-md-8 col-sm-5 col-xs-12 form-group pull-right top_search">
+                                <div class="input-group">
+                                    <input type="text" class="form-control" placeholder="Search for...">
                   <span class="input-group-btn">
                             <button class="btn btn-default" type="button">Go!</button>
                         </span>
+                                </div>
                             </div>
                         </div>
                     </div>
-                    <table id="datatable1" class="table table-striped table-bordered dataTable no-footer dtr-inline">
-                        <thead>
-                        <tr role="row">
-                            <#list headers as header>
-                                <th class="sorting" data-order="0" data-column="${header.val}">${header.str}</th>
-                            </#list>
-                        </tr>
-                        </thead>
-                        <tbody>
-                        <#--<#list data as row>-->
+                    <div class="clearfix"></div>
+                    <div style="overflow: auto">
+                        <table id="datatable1" class="table table-striped table-bordered dataTable no-footer dtr-inline">
+                            <thead>
+                            <tr role="row">
+                                <#list headers as header>
+                                    <#if header.visible>
+                                        <th class="sorting" data-order="0" data-column="${header.val}">${header.str}</th>
+                                    </#if>
+                                </#list>
+                            </tr>
+                            </thead>
+                            <tbody>
+                            <#--<#list data as row>-->
                             <#--<tr>-->
                                 <#--<#list row.columns as column>-->
                                     <#--<td>${column.strVal!""}</td>-->
                                 <#--</#list>-->
                             <#--</tr>-->
                             <#--</#list>-->
-                        </tbody>
-                    </table>
-                    <div class="btn-group" id="pages-selector">
-                        <button class="btn btn-success" type="button">5</button>
-                        <button class="btn btn-success" type="button">6</button>
-                        <button class="btn btn-success" type="button">7</button>
+                            </tbody>
+                        </table>
                     </div>
+                    <div class="clearfix"></div>
+                    <div id="bpages-selector"></div>
                 </div>
             </div>
         </div>
@@ -99,25 +106,6 @@
                 content += '</tr>';
             }
             return content;
-        }
-
-        function renderPagesSelector(data, size) {
-            var pages = data.recordsTotal / size;
-            if (pages < 1) {
-                pages = 1;
-            } else if (data.recordsTotal % size != 0) {
-                pages += 1;
-            }
-            var content = '';
-            for (var i = 1; i <= pages; i++) {
-                var setActive = (i - 1) == filterObj.page ? " active" : "";
-                content += "\<button class=\"btn btn-success js-page-select" + setActive + "\" type=\"button\"\>" + i + "\</button>";
-            }
-            $("#pages-selector").html(content);
-            $(".js-page-select").click(function (e) {
-                filterObj.page = parseInt($(this).text()) - 1;
-                loadData();
-            });
         }
 
         function initSortControllers() {
@@ -165,7 +153,9 @@
                 success: function (data) {
                     lastData = data;
                     $("#datatable1 > tbody ").html(generateRows(data));
-                    renderPagesSelector(data, filterObj.size);
+//                    renderPagesSelector(data, filterObj.size);
+                    var pages = Math.floor(data.recordsTotal / filterObj.size);
+                    initPagesSelector(filterObj.page, pages)
                 },
                 error: function (error) {
                     console.error(error);
@@ -178,9 +168,69 @@
             initSortControllers();
         }
 
+        function initPagesSelector(current, totalPages) {
+            $("#bpages-selector").bs_pagination({
+                currentPage: current + 1,
+                rowsPerPage: 10,
+                maxRowsPerPage: 10,
+                totalPages: totalPages,
+                totalRows: 0,
 
-//        $('#datatable').dataTable();
+                visiblePageLinks: 6,
+
+                showGoToPage: true,
+                showRowsPerPage: true,
+                showRowsInfo: true,
+                showRowsDefaultInfo: true,
+
+                directURL: false, // or a function with current page as argument
+                disableTextSelectionInNavPane: true, // disable text selection and double click
+
+                bootstrap_version: "3",
+
+                // bootstrap 3
+                containerClass: "well",
+
+                mainWrapperClass: "row",
+
+                navListContainerClass: "col-xs-12 col-sm-12 col-md-6",
+                navListWrapperClass: "",
+                navListClass: "pagination pagination_custom",
+                navListActiveItemClass: "active",
+
+                navGoToPageContainerClass: "col-xs-6 col-sm-4 col-md-2 row-space",
+                navGoToPageIconClass: "glyphicon glyphicon-arrow-right",
+                navGoToPageClass: "form-control small-input",
+
+                navRowsPerPageContainerClass: "col-xs-6 col-sm-4 col-md-2 row-space",
+                navRowsPerPageIconClass: "glyphicon glyphicon-th-list",
+                navRowsPerPageClass: "form-control small-input",
+
+                navInfoContainerClass: "col-xs-12 col-sm-4 col-md-2 row-space",
+                navInfoClass: "",
+
+                // element IDs
+                nav_list_id_prefix: "nav_list_",
+                nav_top_id_prefix: "top_",
+                nav_prev_id_prefix: "prev_",
+                nav_item_id_prefix: "nav_item_",
+                nav_next_id_prefix: "next_",
+                nav_last_id_prefix: "last_",
+
+                nav_goto_page_id_prefix: "goto_page_",
+                nav_rows_per_page_id_prefix: "rows_per_page_",
+                nav_rows_info_id_prefix: "rows_info_",
+
+                onChangePage: function (event, data) { // returns page_num and rows_per_page after a link has clicked
+                    filterObj.page = data.currentPage - 1;
+                    loadData();
+                },
+                onLoad: function () { // returns page_num and rows_per_page on plugin load
+                }
+            });
+        }
     });
+
 </script>
 </#macro>
 
@@ -199,13 +249,16 @@ customFooterScripts=[
 "/js/datatables/dataTables.keyTable.min.js",
 "/js/datatables/dataTables.responsive.min.js",
 "/js/datatables/responsive.bootstrap.min.js",
-"/js/datatables/dataTables.scroller.min.js"
+"/js/datatables/dataTables.scroller.min.js",
+"/js/jquery.bs_pagination.min.js",
+"/js/bs_pagination/localization/en.min.js"
 ]
 customHeaderStyles=[
 "/js/datatables/jquery.dataTables.min.css",
 "/js/datatables/buttons.bootstrap.min.css",
 "/js/datatables/fixedHeader.bootstrap.min.css",
 "/js/datatables/responsive.bootstrap.min.css",
-"/js/datatables/scroller.bootstrap.min.css"
+"/js/datatables/scroller.bootstrap.min.css",
+"/css/jquery.bs_pagination.min.css"
 ]
 />
