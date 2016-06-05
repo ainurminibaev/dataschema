@@ -9,7 +9,7 @@
     <meta http-equiv="X-UA-Compatible" content="IE=edge">
     <meta name="viewport" content="width=device-width, initial-scale=1">
 
-    <title>Data Schema </title>
+    <title>Data Schema</title>
 
     <link rel="apple-touch-icon" sizes="57x57" href="/favs/apple-icon-57x57.png">
     <link rel="apple-touch-icon" sizes="60x60" href="/favs/apple-icon-60x60.png">
@@ -20,7 +20,7 @@
     <link rel="apple-touch-icon" sizes="144x144" href="/favs/apple-icon-144x144.png">
     <link rel="apple-touch-icon" sizes="152x152" href="/favs/apple-icon-152x152.png">
     <link rel="apple-touch-icon" sizes="180x180" href="/favs/apple-icon-180x180.png">
-    <link rel="icon" type="image/png" sizes="192x192"  href="/favs/android-icon-192x192.png">
+    <link rel="icon" type="image/png" sizes="192x192" href="/favs/android-icon-192x192.png">
     <link rel="icon" type="image/png" sizes="32x32" href="/favs/favicon-32x32.png">
     <link rel="icon" type="image/png" sizes="96x96" href="/favs/favicon-96x96.png">
     <link rel="icon" type="image/png" sizes="16x16" href="/favs/favicon-16x16.png">
@@ -88,53 +88,7 @@
                     <div class="menu_section">
                         <h3>General</h3>
                         <ul class="nav side-menu">
-                            <li><a><i class="fa fa-home"></i> Home <span class="fa fa-chevron-down"></span></a>
-                                <ul class="nav child_menu" style="display: none">
-                                    <li><a href="/index.html">Dashboard</a>
-                                    </li>
-                                    <li><a href="/index2.html">Dashboard2</a>
-                                    </li>
-                                    <li><a href="/index3.html">Dashboard3</a>
-                                    </li>
-                                </ul>
-                            </li>
-                            <li><a><i class="fa fa-edit"></i> Forms <span class="fa fa-chevron-down"></span></a>
-                                <ul class="nav child_menu" style="display: none">
-                                    <li><a href="form.html">General Form</a>
-                                    </li>
-                                    <li><a href="form_advanced.html">Advanced Components</a>
-                                    </li>
-                                    <li><a href="form_validation.html">Form Validation</a>
-                                    </li>
-                                    <li><a href="form_wizards.html">Form Wizard</a>
-                                    </li>
-                                    <li><a href="form_upload.html">Form Upload</a>
-                                    </li>
-                                    <li><a href="form_buttons.html">Form Buttons</a>
-                                    </li>
-                                </ul>
-                            </li>
-                            <li><a><i class="fa fa-desktop"></i> UI Elements <span class="fa fa-chevron-down"></span></a>
-                                <ul class="nav child_menu" style="display: none">
-                                    <li><a href="general_elements.html">General Elements</a>
-                                    </li>
-                                    <li><a href="media_gallery.html">Media Gallery</a>
-                                    </li>
-                                    <li><a href="typography.html">Typography</a>
-                                    </li>
-                                    <li><a href="icons.html">Icons</a>
-                                    </li>
-                                    <li><a href="glyphicons.html">Glyphicons</a>
-                                    </li>
-                                    <li><a href="widgets.html">Widgets</a>
-                                    </li>
-                                    <li><a href="invoice.html">Invoice</a>
-                                    </li>
-                                    <li><a href="inbox.html">Inbox</a>
-                                    </li>
-                                    <li><a href="calendar.html">Calendar</a>
-                                    </li>
-                                </ul>
+                            <li><a><i class="fa fa-home"></i> Home </span></a>
                             </li>
                             <li><a><i class="fa fa-table"></i> Tables <span class="fa fa-chevron-down"></span></a>
                                 <ul class="nav child_menu" style="display: none">
@@ -161,58 +115,12 @@
                             </li>
                         </ul>
                     </div>
-                    <div class="menu_section">
-                        <h3>Live On</h3>
-                        <ul class="nav side-menu">
-                            <li><a><i class="fa fa-bug"></i> Additional Pages <span class="fa fa-chevron-down"></span></a>
-                                <ul class="nav child_menu" style="display: none">
-                                    <li><a href="e_commerce.html">E-commerce</a>
-                                    </li>
-                                    <li><a href="projects.html">Projects</a>
-                                    </li>
-                                    <li><a href="project_detail.html">Project Detail</a>
-                                    </li>
-                                    <li><a href="contacts.html">Contacts</a>
-                                    </li>
-                                    <li><a href="profile.html">Profile</a>
-                                    </li>
-                                </ul>
-                            </li>
-                            <li><a><i class="fa fa-windows"></i> Extras <span class="fa fa-chevron-down"></span></a>
-                                <ul class="nav child_menu" style="display: none">
-                                    <li><a href="page_404.html">404 Error</a>
-                                    </li>
-                                    <li><a href="page_500.html">500 Error</a>
-                                    </li>
-                                    <li><a href="plain_page.html">Plain Page</a>
-                                    </li>
-                                    <li><a href="login.html">Login Page</a>
-                                    </li>
-                                    <li><a href="pricing_tables.html">Pricing Tables</a>
-                                    </li>
-
-                                </ul>
-                            </li>
-                            <li><a><i class="fa fa-laptop"></i> Landing Page <span class="label label-success pull-right">Coming Soon</span></a>
-                            </li>
-                        </ul>
-                    </div>
-
                 </div>
                 <!-- /sidebar menu -->
 
                 <!-- /menu footer buttons -->
                 <div class="sidebar-footer hidden-small">
-                    <a data-toggle="tooltip" data-placement="top" title="Settings">
-                        <span class="glyphicon glyphicon-cog" aria-hidden="true"></span>
-                    </a>
-                    <a data-toggle="tooltip" data-placement="top" title="FullScreen">
-                        <span class="glyphicon glyphicon-fullscreen" aria-hidden="true"></span>
-                    </a>
-                    <a data-toggle="tooltip" data-placement="top" title="Lock">
-                        <span class="glyphicon glyphicon-eye-close" aria-hidden="true"></span>
-                    </a>
-                    <a data-toggle="tooltip" data-placement="top" title="Logout">
+                    <a data-toggle="tooltip" data-placement="top" title="Logout" href="/logout">
                         <span class="glyphicon glyphicon-off" aria-hidden="true"></span>
                     </a>
                 </div>
@@ -228,104 +136,6 @@
                     <div class="nav toggle">
                         <a id="menu_toggle"><i class="fa fa-bars"></i></a>
                     </div>
-
-                    <ul class="nav navbar-nav navbar-right">
-                        <li class="">
-                            <a href="javascript:;" class="user-profile dropdown-toggle" data-toggle="dropdown" aria-expanded="false">
-                                <img src="/images/img.jpg" alt="">John Doe
-                                <span class=" fa fa-angle-down"></span>
-                            </a>
-                            <ul class="dropdown-menu dropdown-usermenu animated fadeInDown pull-right">
-                                <li><a href="javascript:;"> Profile</a>
-                                </li>
-                                <li>
-                                    <a href="javascript:;">
-                                        <span class="badge bg-red pull-right">50%</span>
-                                        <span>Settings</span>
-                                    </a>
-                                </li>
-                                <li>
-                                    <a href="javascript:;">Help</a>
-                                </li>
-                                <li><a href="login.html"><i class="fa fa-sign-out pull-right"></i> Log Out</a>
-                                </li>
-                            </ul>
-                        </li>
-
-                        <li role="presentation" class="dropdown">
-                            <a href="javascript:;" class="dropdown-toggle info-number" data-toggle="dropdown" aria-expanded="false">
-                                <i class="fa fa-envelope-o"></i>
-                                <span class="badge bg-green">6</span>
-                            </a>
-                            <ul id="menu1" class="dropdown-menu list-unstyled msg_list animated fadeInDown" role="menu">
-                                <li>
-                                    <a>
-                      <span class="image">
-                                        <img src="images/img.jpg" alt="Profile Image"/>
-                                    </span>
-                      <span>
-                                        <span>John Smith</span>
-                      <span class="time">3 mins ago</span>
-                      </span>
-                      <span class="message">
-                                        Film festivals used to be do-or-die moments for movie makers. They were where...
-                                    </span>
-                                    </a>
-                                </li>
-                                <li>
-                                    <a>
-                      <span class="image">
-                                        <img src="images/img.jpg" alt="Profile Image"/>
-                                    </span>
-                      <span>
-                                        <span>John Smith</span>
-                      <span class="time">3 mins ago</span>
-                      </span>
-                      <span class="message">
-                                        Film festivals used to be do-or-die moments for movie makers. They were where...
-                                    </span>
-                                    </a>
-                                </li>
-                                <li>
-                                    <a>
-                      <span class="image">
-                                        <img src="images/img.jpg" alt="Profile Image"/>
-                                    </span>
-                      <span>
-                                        <span>John Smith</span>
-                      <span class="time">3 mins ago</span>
-                      </span>
-                      <span class="message">
-                                        Film festivals used to be do-or-die moments for movie makers. They were where...
-                                    </span>
-                                    </a>
-                                </li>
-                                <li>
-                                    <a>
-                      <span class="image">
-                                        <img src="images/img.jpg" alt="Profile Image"/>
-                                    </span>
-                      <span>
-                                        <span>John Smith</span>
-                      <span class="time">3 mins ago</span>
-                      </span>
-                      <span class="message">
-                                        Film festivals used to be do-or-die moments for movie makers. They were where...
-                                    </span>
-                                    </a>
-                                </li>
-                                <li>
-                                    <div class="text-center">
-                                        <a>
-                                            <strong>See All Alerts</strong>
-                                            <i class="fa fa-angle-right"></i>
-                                        </a>
-                                    </div>
-                                </li>
-                            </ul>
-                        </li>
-
-                    </ul>
                 </nav>
             </div>
 

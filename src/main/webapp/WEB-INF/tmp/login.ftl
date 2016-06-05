@@ -8,7 +8,7 @@
   <meta http-equiv="X-UA-Compatible" content="IE=edge">
   <meta name="viewport" content="width=device-width, initial-scale=1">
 
-  <title>Gentallela Alela! | </title>
+  <title>DataSchema - Modern database administration tool</title>
 
   <!-- Bootstrap core CSS -->
 
@@ -48,13 +48,13 @@
           <form method="post" action="/login">
             <h1>Login Form</h1>
               <div>
-                  <input type="text" class="form-control" placeholder="DB host" required="" name="db_url" />
+                  <input type="text" class="form-control" placeholder="DB host" required="" name="db_url" value="jdbc:postgresql://localhost:5432/sample" />
               </div>
             <div>
-              <input type="text" class="form-control" placeholder="DB username" required="" name="username" />
+              <input type="text" class="form-control" placeholder="DB username" required="" name="username" value="postgres"/>
             </div>
             <div>
-              <input type="password" class="form-control" placeholder="DB password" required="" name="password" />
+              <input type="password" class="form-control" placeholder="DB password" required="" name="password" value="postgres" />
             </div>
             <div>
                 <input type="submit" class="btn btn-default submit" value="Log in"/>
@@ -105,9 +105,11 @@
               <div class="clearfix"></div>
               <br />
               <div>
-                <h1><i class="fa fa-paw" style="font-size: 26px;"></i> Gentelella Alela!</h1>
+                <h1>
+                    <img src="https://cdn3.iconfinder.com/data/icons/databases-2-2/512/data_cube-512.png" height="40" style="padding-left: 5px;"> DataSchema
+                </h1>
 
-                <p>©2015 All Rights Reserved. Gentelella Alela! is a Bootstrap 3 template. Privacy and Terms</p>
+                <p>©2016 All Rights Reserved.</p>
               </div>
             </div>
           </form>
