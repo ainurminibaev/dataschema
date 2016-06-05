@@ -199,6 +199,14 @@
             <version>1.0.19</version>
         </dependency>
 
+        <!-- http://mvnrepository.com/artifact/org.postgresql/postgresql -->
+        <dependency>
+            <groupId>org.postgresql</groupId>
+            <artifactId>postgresql</artifactId>
+            <version>9.4.1208.jre7</version>
+        </dependency>
+
+
         <!--&lt;!&ndash; http://mvnrepository.com/artifact/com.cloudinary/cloudinary &ndash;&gt;-->
         <!--<dependency>-->
             <!--<groupId>com.cloudinary</groupId>-->
