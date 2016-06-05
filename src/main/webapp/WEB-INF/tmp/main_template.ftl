@@ -61,7 +61,7 @@
             <div class="left_col scroll-view">
 
                 <div class="navbar nav_title" style="border: 0;">
-                    <a href="index.html" class="site_title">
+                    <a href="/" class="site_title">
                         <img src="https://cdn3.iconfinder.com/data/icons/databases-2-2/512/data_cube-512.png" height="40" style="padding-left: 5px;">
                         <span>Data Schema</span>
                     </a>
