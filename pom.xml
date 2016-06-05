@@ -21,9 +21,9 @@
 
     <profiles>
         <profile>
-            <id>in-server</id>
+            <id>server</id>
             <properties>
-                <tomcatHome>/home/insurance-notify/tomcat</tomcatHome>
+                <tomcatHome>/home/dataschema/tomcat</tomcatHome>
             </properties>
         </profile>
 
