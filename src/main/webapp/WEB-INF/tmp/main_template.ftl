@@ -88,7 +88,7 @@
                     <div class="menu_section">
                         <h3>General</h3>
                         <ul class="nav side-menu">
-                            <li><a><i class="fa fa-home"></i> Home </span></a>
+                            <li><a href="/"><i class="fa fa-home"></i> Home </span></a>
                             </li>
                             <li><a><i class="fa fa-table"></i> Tables <span class="fa fa-chevron-down"></span></a>
                                 <ul class="nav child_menu" style="display: none">
@@ -101,15 +101,7 @@
                             </li>
                             <li><a><i class="fa fa-bar-chart-o"></i> Data Presentation <span class="fa fa-chevron-down"></span></a>
                                 <ul class="nav child_menu" style="display: none">
-                                    <li><a href="chartjs.html">Chart JS</a>
-                                    </li>
-                                    <li><a href="chartjs2.html">Chart JS2</a>
-                                    </li>
-                                    <li><a href="morisjs.html">Moris JS</a>
-                                    </li>
-                                    <li><a href="echarts.html">ECharts </a>
-                                    </li>
-                                    <li><a href="other_charts.html">Other Charts </a>
+                                    <li><a href="/charts">Chart Examples</a>
                                     </li>
                                 </ul>
                             </li>
@@ -149,7 +141,7 @@
             <!-- footer content -->
             <footer>
                 <div class="pull-right">
-                    Gentelella - Bootstrap Admin Template by <a href="https://colorlib.com">Colorlib</a>
+                    DataSchema by <a href="https://github.com/ainurminibaev">Ainur Minibaev</a>. Inspired by <a href="http://itis.kpfu.ru">ITIS.Kazan Federal University</a>
                 </div>
                 <div class="clearfix"></div>
             </footer>

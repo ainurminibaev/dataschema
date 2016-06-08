@@ -63,13 +63,6 @@
                             </tr>
                             </thead>
                             <tbody>
-                            <#--<#list data as row>-->
-                            <#--<tr>-->
-                                <#--<#list row.columns as column>-->
-                                    <#--<td>${column.strVal!""}</td>-->
-                                <#--</#list>-->
-                            <#--</tr>-->
-                            <#--</#list>-->
                             </tbody>
                         </table>
                     </div>
@@ -153,7 +146,6 @@
                 success: function (data) {
                     lastData = data;
                     $("#datatable1 > tbody ").html(generateRows(data));
-//                    renderPagesSelector(data, filterObj.size);
                     var pages = Math.floor(data.recordsTotal / filterObj.size);
                     initPagesSelector(filterObj.page, pages)
                 },
