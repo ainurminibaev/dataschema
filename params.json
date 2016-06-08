@@ -1,6 +1,6 @@
 {
-  "name": "Dataschema - Modern database administration tool",
-  "tagline": "Modern database administration tool. Cross-platform SQL GUI with data grid, interactive automatic charts reports with Slack integration",
+  "name": "DataSchema - Modern database data administration tool",
+  "tagline": "Modern database data administration tool. Cross-platform SQL GUI with data grid, interactive automatic charts reports with Slack integration",
   "body": "### Dynamic datagrid\r\nWe scan your database and create metadata based dynamic data tables for you\r\n\r\n### Wide-range supported databases list\r\nWe support all modern databases including PostgreSQL, MySQL, Oracle\r\n\r\n### Automatic reports and Slack integration\r\nSQL-based reports for your team or site administrators.\r\nYou can easily send your reports to Slack or just open them on site\r\n\r\n### Authors and Contributors\r\nInspired by [Kazan Federal University](http://kpfu.ru)\r\n",
   "note": "Don't delete this file! It's used internally to help with page regeneration."
 }
